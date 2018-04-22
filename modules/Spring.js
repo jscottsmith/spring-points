@@ -4,14 +4,16 @@ import Point from './Point';
 // Spring
 //*‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡*/
 
-const ELASTICITY = 0.002;
-const DAMPING = 0.999;
+// defaults and constants
+const ELASTICITY = 0.4; // elastic force toward the origin
+const DAMPING = 0.95;
 const MASS = 1;
-const MOUSE_STRENGTH = 5;
-const MOUSE_ATTRACT = true;
+const MOUSE_STRENGTH = 0.1; // 0 - 1
+const MOUSE_RADIUS = 300;
+const MOUSE_ATTRACT = false;
 
 class Spring extends Point {
-    constructor(x, y) {
+    constructor({ x, y, isFixed, mass, elasticity, damping }) {
         super(x, y);
         this.ox = x; // original origin x, never changes
         this.oy = y; // original origin y, never changes
@@ -20,14 +22,17 @@ class Spring extends Point {
         this.fx = 0; // force x
         this.fy = 0; // force y
 
+        this.isFixed = isFixed; // indeicates whether this point can be moved
+
         // spring constants
-        this.mass = MASS;
-        this.elasticity = ELASTICITY;
-        this.damping = DAMPING;
+        this.mass = mass || MASS;
+        this.elasticity = elasticity || ELASTICITY;
+        this.damping = damping || DAMPING;
 
         // config const
         this.mouseStrength = MOUSE_STRENGTH;
         this.mouseAttract = MOUSE_ATTRACT;
+        this.mouseRadius = MOUSE_RADIUS;
     }
 
     applyForce(x, y) {
@@ -35,46 +40,63 @@ class Spring extends Point {
         this.fy += y;
     }
 
-    setForceFromMouse({ x, y }) {
-        const dx = this.x - x;
-        const dy = this.y - y;
-        const angle = this.angleRadians({ y, x });
+    // attractors = []; // just testing
+    // addAttractor(point) {
+    //     this.attractors = [...this.attractors, point];
+    // }
+    // setForceFromAttractors() {
+    //     // currently unused, was testing out an
+    //     this.attractors.forEach(point => {
+    //         const { staticDistance } = point;
+    //         // current distance
+    //         // const distance = this.distance(point);
+    //         // if (distance > staticDistance)
+    //         // const delta = distance - staticDistance;
+    //         // force to origin, difference multiplied by elasticity constant
+    //         const ofx = (point.x - this.x) * this.elasticity;
+    //         const ofy = (point.y - this.y) * this.elasticity;
+    //         this.applyForce(ofx, ofy);
+    //     });
+    // }
 
-        let dist = this.mouseStrength / Math.sqrt(dx * dx + dy * dy);
+    setForceFromMouse(pointer) {
+        const { x, y } = pointer.position;
 
-        if (this.mouseAttract) {
-            dist *= -1;
+        const distance = this.distance(pointer.position);
+
+        if (distance < this.mouseRadius) {
+            const [dx, dy] = pointer.delta();
+            const power =
+                (1 - distance / this.mouseRadius) * this.mouseStrength;
+
+            this.applyForce(dx * power, dy * power);
         }
-
-        // move force point at angle
-        const fx = Math.cos(angle) * dist;
-        const fy = Math.sin(angle) * dist;
-
-        this.applyForce(fx, fy);
     }
 
-    applySpringForce() {
+    setSpringForce() {
         // force to origin, difference multiplied by elasticity constant
-        const ofx = (this.ox - this.x) * this.elasticity;
-        const ofy = (this.oy - this.y) * this.elasticity;
+        const fx = (this.ox - this.x) * this.elasticity;
+        const fy = (this.oy - this.y) * this.elasticity;
 
         // sum forces
-        const fx = this.fx + ofx;
-        const fy = this.fy + ofy;
+        this.fx += fx;
+        this.fy += fy;
+    }
+
+    solveVelocity() {
+        if (this.fx === 0 && this.fy === 0) return;
 
         // acceleration = force / mass;
-        const ax = fx / this.mass;
-        const ay = fy / this.mass;
+        const ax = this.fx / this.mass;
+        const ay = this.fy / this.mass;
 
-        // velocity
+        // velocity, apply damping then ad acceleration
         this.vx = this.damping * this.vx + ax;
         this.vy = this.damping * this.vy + ay;
 
         // add velocity to center and top/left
         this.x += this.vx;
         this.y += this.vy;
-        this.cx += this.vx;
-        this.cy += this.vy;
 
         // reset any applied forces
         this.fx = 0;
@@ -82,20 +104,21 @@ class Spring extends Point {
     }
 
     update = ({ pointer }) => {
-        this.setForceFromMouse(pointer.position);
-        this.applySpringForce();
+        if (this.isFixed) return;
+        this.setForceFromMouse(pointer);
+        this.setSpringForce();
+        this.solveVelocity();
     };
 
     draw = ({ ctx, pointer }) => {
-        const { x, y } = this;
-
         // temporary, just to see what's happening
-        ctx.strokeStyle = '#fff';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.arc(x, y, 10, 0, Math.PI * 2, true);
-        ctx.closePath();
-        ctx.stroke();
+        // const { x, y } = this;
+        // ctx.strokeStyle = '#ccc';
+        // ctx.lineWidth = 2;
+        // ctx.beginPath();
+        // ctx.arc(x, y, 4, 0, Math.PI * 2, true);
+        // ctx.closePath();
+        // ctx.stroke();
     };
 }
 

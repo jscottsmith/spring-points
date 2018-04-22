@@ -19,14 +19,15 @@ class Background extends Entity {
     }
 
     drawGradient({ ctx, canvas, bounds }) {
-        const offset = this.toValue(20);
-        const gradientBounds = bounds.offsetInner(offset);
-        const gradient = ctx.createLinearGradient(...gradientBounds.params);
-        gradient.addColorStop(0, '#4286f4');
-        gradient.addColorStop(1, '#5b3dd3');
+        // const gradient = ctx.createLinearGradient(...bounds.params);
+        // gradient.addColorStop(0, '#333');
+        // gradient.addColorStop(1, '#222');
 
-        ctx.fillStyle = gradient;
-        ctx.fillRect(...gradientBounds.params);
+        // ctx.fillStyle = gradient;
+        ctx.fillStyle = '#222';
+        ctx.globalAlpha = 0.9;
+        ctx.fillRect(...bounds.params);
+        ctx.globalAlpha = 1;
     }
 
     draw = context => {
