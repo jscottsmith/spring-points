@@ -5,12 +5,9 @@ import Point from './Point';
 //*‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡*/
 
 // defaults and constants
-const ELASTICITY = 0.4; // elastic force toward the origin
-const DAMPING = 0.95;
+const ELASTICITY = 0.1; // elastic force toward the origin
+const DAMPING = 0.9;
 const MASS = 1;
-const MOUSE_STRENGTH = 0.1; // 0 - 1
-const MOUSE_RADIUS = 300;
-const MOUSE_ATTRACT = false;
 
 class Spring extends Point {
     constructor({ x, y, isFixed, mass, elasticity, damping }) {
@@ -28,11 +25,6 @@ class Spring extends Point {
         this.mass = mass || MASS;
         this.elasticity = elasticity || ELASTICITY;
         this.damping = damping || DAMPING;
-
-        // config const
-        this.mouseStrength = MOUSE_STRENGTH;
-        this.mouseAttract = MOUSE_ATTRACT;
-        this.mouseRadius = MOUSE_RADIUS;
     }
 
     applyForce(x, y) {
@@ -58,20 +50,6 @@ class Spring extends Point {
     //         this.applyForce(ofx, ofy);
     //     });
     // }
-
-    setForceFromMouse(pointer) {
-        const { x, y } = pointer.position;
-
-        const distance = this.distance(pointer.position);
-
-        if (distance < this.mouseRadius) {
-            const [dx, dy] = pointer.delta();
-            const power =
-                (1 - distance / this.mouseRadius) * this.mouseStrength;
-
-            this.applyForce(dx * power, dy * power);
-        }
-    }
 
     setSpringForce() {
         // force to origin, difference multiplied by elasticity constant
@@ -103,9 +81,8 @@ class Spring extends Point {
         this.fy = 0;
     }
 
-    update = ({ pointer }) => {
+    update = () => {
         if (this.isFixed) return;
-        this.setForceFromMouse(pointer);
         this.setSpringForce();
         this.solveVelocity();
     };

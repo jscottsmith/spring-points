@@ -1,4 +1,5 @@
 import Entity from './Entity';
+import Point from './Point';
 import Spring from './Spring';
 
 //*‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡/
@@ -7,7 +8,10 @@ import Spring from './Spring';
 
 const SPRING_CONSTANT = 0.1;
 const FREQUENCY = 2;
-const WAVE_OFFSET = 0;
+const WAVE_OFFSET = 30;
+
+const MOUSE_STRENGTH = 0.1; // 0 - 1
+const MOUSE_RADIUS = 300;
 
 class Wave extends Entity {
     constructor({ p1, p2, points, color, mass }) {
@@ -23,14 +27,24 @@ class Wave extends Entity {
         const offX = dx / (points - 1);
         const offY = dy / (points - 1);
 
+        // angle perpendicular to the slope of the line
+        const theta = p1.angleRadians(p2) + Math.PI / 2;
+
         this.points = new Array(points).fill(null).map((p, i) => {
-            const sinX = Math.sin(i / FREQUENCY) * WAVE_OFFSET;
-            const sinY = Math.sin(-i / FREQUENCY) * WAVE_OFFSET;
-            const x = p1.x + offX * i + sinX;
-            const y = p1.y + offY * i + sinY;
+            // set center point
+            const cx = p1.x + offX * i;
+            const cy = p1.y + offY * i;
+            // create point at center
+            const point = new Point(cx, cy);
+
+            // move at perpendicular angle to slop
+            const freq = i / FREQUENCY;
+            const distance = Math.sin(freq) * WAVE_OFFSET;
+            point.moveAtAngle(theta, distance);
+
             const isFixed = i === 0 || i === points - 1;
 
-            return new Spring({ x, y, isFixed, mass });
+            return new Spring({ x: point.x, y: point.y, isFixed, mass });
         });
 
         // this.points.forEach((point, i) => {
@@ -41,38 +55,48 @@ class Wave extends Entity {
         // });
     }
 
-    applyAdjacentSpringForce() {
+    applyForceFromMouse(point, pointer) {
+        const { x, y } = pointer.position;
+
+        const distance = point.distance(pointer.position);
+
+        if (distance < MOUSE_RADIUS) {
+            const [dx, dy] = pointer.delta();
+            const power = (1 - distance / MOUSE_RADIUS) * MOUSE_STRENGTH;
+
+            point.applyForce(dx * power, dy * power);
+        }
+    }
+
+    applyAdjacentSpringForce(point, i) {
         const { points } = this;
 
-        this.points.forEach((point, i) => {
-            const { x, y } = point;
+        // return if this is the first or last point on the line
+        if (i === 0 || i === points.length - 1) return;
 
-            const ppf = { x: 0, y: 0 }; // prev point force
-            const npf = { x: 0, y: 0 }; // next point force
+        const { x, y } = point;
 
-            // return if this is the first or last point on the line
-            if (i === 0 || i === points.length - 1) return;
+        const ppf = { x: 0, y: 0 }; // prev point force
+        const npf = { x: 0, y: 0 }; // next point force
 
-            // prev point force
-            const pdy = points[i - 1].y - y;
-            const pdx = points[i - 1].x - x;
-            ppf.y = SPRING_CONSTANT * pdy;
-            ppf.x = SPRING_CONSTANT * pdx;
+        // prev point force
+        const pdy = points[i - 1].y - y;
+        const pdx = points[i - 1].x - x;
+        ppf.y = SPRING_CONSTANT * pdy;
+        ppf.x = SPRING_CONSTANT * pdx;
 
-            // next point force
-            const ndy = points[i + 1].y - y;
-            const ndx = points[i + 1].x - x;
-            npf.y = SPRING_CONSTANT * ndy;
-            npf.x = SPRING_CONSTANT * ndx;
+        // next point force
+        const ndy = points[i + 1].y - y;
+        const ndx = points[i + 1].x - x;
+        npf.y = SPRING_CONSTANT * ndy;
+        npf.x = SPRING_CONSTANT * ndx;
 
-            // apply adjacent forces to current spring
-            point.applyForce(ppf.x, ppf.y);
-            point.applyForce(npf.x, npf.y);
-        });
+        // apply adjacent forces to current spring
+        point.applyForce(ppf.x, ppf.y);
+        point.applyForce(npf.x, npf.y);
     }
 
     draw = context => {
-        this.points.forEach(p => p.draw(context));
         const { ctx } = context;
         ctx.strokeStyle = this.color;
         ctx.lineWidth = this.toValue(4);
@@ -80,13 +104,17 @@ class Wave extends Entity {
         ctx.beginPath();
         this.points.forEach(p => {
             ctx.lineTo(p.x, p.y);
+            p.draw(context);
         });
         ctx.stroke();
     };
 
     update = context => {
-        this.applyAdjacentSpringForce();
-        this.points.forEach(p => p.update(context));
+        this.points.forEach((point, i) => {
+            this.applyForceFromMouse(point, context.pointer);
+            this.applyAdjacentSpringForce(point, i);
+            point.update(context);
+        });
     };
 }
 

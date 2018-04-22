@@ -28,9 +28,9 @@ class Point {
         return this;
     }
 
-    movePointAtAngle(point, angle, distance) {
-        this.x = point.x + Math.cos(angle) * distance;
-        this.y = point.y + Math.sin(angle) * distance;
+    moveAtAngle(angle, distance) {
+        this.x += Math.cos(angle) * distance;
+        this.y += Math.sin(angle) * distance;
         return this;
     }
 
@@ -52,6 +52,17 @@ class Point {
         const y = point.y - this.y;
         const x = point.x - this.x;
         return Math.atan2(y, x) * (180 / Math.PI);
+    }
+
+    rotate(origin, radians) {
+        // rotate the point around a given origin point
+        const cos = Math.cos(radians);
+        const sin = Math.sin(radians);
+        this.x =
+            cos * (this.x - origin.x) + sin * (this.y - origin.y) + origin.x;
+        this.y =
+            cos * (this.y - origin.y) - sin * (this.x - origin.x) + origin.y;
+        return this;
     }
 }
 

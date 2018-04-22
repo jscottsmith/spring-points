@@ -12,7 +12,7 @@ const colors = ['#42b9f4', '#8cd8d3', '#547fc4', '#e5cf77', '#4a99ad'];
 
 const DPR = window.devicePixelRatio || 1;
 
-const lines = Array(50)
+const lines = Array(10)
     .fill(null)
     .map(() => {
         const x1 = getRandomInt(100, window.innerWidth - 100) * DPR;
@@ -22,9 +22,9 @@ const lines = Array(50)
         return new Wave({
             p1: new Point(x1, y1),
             p2: new Point(x2, y2),
-            points: 4,
+            points: 50,
             color: colors[getRandomInt(0, colors.length - 1)],
-            mass: getRandomFloat(0.5, 3),
+            mass: getRandomFloat(1, 3),
         });
     });
 
