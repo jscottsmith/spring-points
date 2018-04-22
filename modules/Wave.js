@@ -14,7 +14,7 @@ const MOUSE_STRENGTH = 0.1; // 0 - 1
 const MOUSE_RADIUS = 300;
 
 class Wave extends Entity {
-    constructor({ p1, p2, points, color, mass }) {
+    constructor({ p1, p2, points, color, mass, elasticity, damping }) {
         super();
 
         this.color = color;
@@ -44,7 +44,14 @@ class Wave extends Entity {
 
             const isFixed = i === 0 || i === points - 1;
 
-            return new Spring({ x: point.x, y: point.y, isFixed, mass });
+            return new Spring({
+                x: point.x,
+                y: point.y,
+                isFixed,
+                mass,
+                elasticity,
+                damping,
+            });
         });
 
         // this.points.forEach((point, i) => {
@@ -99,8 +106,9 @@ class Wave extends Entity {
     draw = context => {
         const { ctx } = context;
         ctx.strokeStyle = this.color;
-        ctx.lineWidth = this.toValue(4);
+        ctx.lineWidth = this.toValue(6);
         ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
         ctx.beginPath();
         this.points.forEach(p => {
             ctx.lineTo(p.x, p.y);

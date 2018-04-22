@@ -10,6 +10,7 @@ class Pointer {
         this.delta;
         this.lastPosition = new Point(0, 0);
         this.position = new Point(0, 0);
+
         this.addListeners();
     }
 
@@ -26,6 +27,11 @@ class Pointer {
                     const { x: px, y: py } = this.position;
                     this.lastPosition.moveTo(px, py);
 
+                    // disable the demo modifier if it's been added
+                    if (this.modifier) {
+                        this.modifier = null;
+                    }
+
                     if (touch) {
                         e.preventDefault();
                         const x = e.targetTouches[0].clientX * this.dpr;
@@ -41,6 +47,14 @@ class Pointer {
             );
         });
     }
+
+    addPointerModifier(modifier) {
+        this.modifier = modifier;
+    }
+
+    update = ({ tick }) => {
+        this.modifier && this.modifier(this, tick);
+    };
 }
 
 export default Pointer;
