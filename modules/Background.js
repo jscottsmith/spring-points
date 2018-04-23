@@ -24,10 +24,10 @@ class Background extends Entity {
         // gradient.addColorStop(1, '#222');
 
         // ctx.fillStyle = gradient;
-        ctx.fillStyle = '#222';
-        ctx.globalAlpha = 0.9;
+        ctx.fillStyle = '#eee';
+        // ctx.globalAlpha = 0.9;
         ctx.fillRect(...bounds.params);
-        ctx.globalAlpha = 1;
+        // ctx.globalAlpha = 1;
     }
 
     draw = context => {

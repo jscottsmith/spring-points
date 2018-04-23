@@ -10,7 +10,14 @@ const DAMPING = 0.9;
 const MASS = 1;
 
 class Spring extends Point {
-    constructor({ x, y, isFixed, mass, elasticity, damping }) {
+    constructor({
+        x,
+        y,
+        isFixed,
+        mass = MASS,
+        elasticity = ELASTICITY,
+        damping = DAMPING,
+    }) {
         super(x, y);
         this.ox = x; // original origin x, never changes
         this.oy = y; // original origin y, never changes
@@ -22,9 +29,9 @@ class Spring extends Point {
         this.isFixed = isFixed; // indeicates whether this point can be moved
 
         // spring constants
-        this.mass = mass || MASS;
-        this.elasticity = elasticity || ELASTICITY;
-        this.damping = damping || DAMPING;
+        this.mass = mass;
+        this.elasticity = elasticity;
+        this.damping = damping;
     }
 
     applyForce(x, y) {

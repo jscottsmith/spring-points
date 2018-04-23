@@ -6,12 +6,12 @@ import Spring from './Spring';
 // Wave
 //*‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡*/
 
-const SPRING_CONSTANT = 0.1;
+const SPRING_CONSTANT = 0.2;
 const FREQUENCY = 2;
-const WAVE_OFFSET = 30;
+const WAVE_OFFSET = 0;
 
-const MOUSE_STRENGTH = 0.1; // 0 - 1
-const MOUSE_RADIUS = 300;
+const MOUSE_STRENGTH = 0.5; // 0 - 1
+const MOUSE_RADIUS = 100;
 
 class Wave extends Entity {
     constructor({ p1, p2, points, color, mass }) {
@@ -37,14 +37,13 @@ class Wave extends Entity {
             // create point at center
             const point = new Point(cx, cy);
 
-            // move at perpendicular angle to slop
-            const freq = i / FREQUENCY;
-            const distance = Math.sin(freq) * WAVE_OFFSET;
+            // move at perpendicular angle to slope
+            const distance = Math.sin(i) * WAVE_OFFSET;
             point.moveAtAngle(theta, distance);
 
             const isFixed = i === 0 || i === points - 1;
 
-            return new Spring({ x: point.x, y: point.y, isFixed, mass });
+            return new Spring({ x: point.x, y: point.y, isFixed: false, mass });
         });
 
         // this.points.forEach((point, i) => {
