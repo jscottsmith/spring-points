@@ -24,7 +24,7 @@ class Background extends Entity {
         // gradient.addColorStop(1, '#222');
 
         // ctx.fillStyle = gradient;
-        ctx.fillStyle = '#eee';
+        ctx.fillStyle = '#252f3d';
         // ctx.globalAlpha = 0.9;
         ctx.fillRect(...bounds.params);
         // ctx.globalAlpha = 1;

@@ -26,3 +26,25 @@ export function scaleBetween(initialVal, minAllow, maxAllow, min, max) {
 export function cycle(value, total) {
     return (value % total + total) % total;
 }
+
+export function clip(x, min, max) {
+    if (min > max) {
+        return x;
+    } else if (x < min) {
+        return min;
+    } else if (x > max) {
+        return max;
+    } else {
+        return x;
+    }
+}
+
+export function randomGauss(mu = 0, sigma = 1, nsamples = 6) {
+    // http://stackoverflow.com/a/33567961
+    var run_total = 0;
+    for (var i = 0; i < nsamples; i++) {
+        run_total += Math.random();
+    }
+
+    return sigma * (run_total - nsamples / 2) / (nsamples / 2) + mu;
+}

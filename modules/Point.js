@@ -12,6 +12,10 @@ class Point {
         return [this.x, this.y];
     }
 
+    clone() {
+        return new Point(this.x, this.y);
+    }
+
     delta(point) {
         return [this.x - point.x, this.y - point.y];
     }

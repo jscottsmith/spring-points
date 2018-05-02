@@ -24,23 +24,37 @@ class Pointer {
                 e => {
                     // move previous point
                     const { x: px, y: py } = this.position;
-                    this.lastPosition.moveTo(px, py);
+
+                    // disable the demo modifier if it's been added
+                    if (this.modifier) {
+                        this.modifier = null;
+                    }
 
                     if (touch) {
                         e.preventDefault();
                         const x = e.targetTouches[0].clientX * this.dpr;
                         const y = e.targetTouches[0].clientY * this.dpr;
                         this.position.moveTo(x, y);
+                        this.lastPosition.moveTo(px, py);
                     } else {
                         const x = e.clientX * this.dpr;
                         const y = e.clientY * this.dpr;
                         this.position.moveTo(x, y);
+                        this.lastPosition.moveTo(px, py);
                     }
                 },
                 false
             );
         });
     }
+
+    addPointerModifier(modifier) {
+        this.modifier = modifier;
+    }
+
+    update = ({ tick }) => {
+        this.modifier && this.modifier(this, tick);
+    };
 }
 
 export default Pointer;

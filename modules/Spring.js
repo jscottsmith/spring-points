@@ -5,9 +5,14 @@ import Point from './Point';
 //*‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡*/
 
 // defaults and constants
-const ELASTICITY = 0.1; // elastic force toward the origin
-const DAMPING = 0.9;
-const MASS = 1;
+const ELASTICITY = 0.03; // elastic force toward the origin
+const DAMPING = 0.75;
+const MASS = 0.8;
+const ADJACENT_SPRING_CONSTANT = 0.1;
+
+const DPR = window.devicePixelRatio || 1;
+const MOUSE_STRENGTH = 0.5; // 0 - 1
+const MOUSE_RADIUS = 100 * DPR;
 
 class Spring extends Point {
     constructor({
@@ -39,24 +44,40 @@ class Spring extends Point {
         this.fy += y;
     }
 
-    // attractors = []; // just testing
-    // addAttractor(point) {
-    //     this.attractors = [...this.attractors, point];
-    // }
-    // setForceFromAttractors() {
-    //     // currently unused, was testing out an
-    //     this.attractors.forEach(point => {
-    //         const { staticDistance } = point;
-    //         // current distance
-    //         // const distance = this.distance(point);
-    //         // if (distance > staticDistance)
-    //         // const delta = distance - staticDistance;
-    //         // force to origin, difference multiplied by elasticity constant
-    //         const ofx = (point.x - this.x) * this.elasticity;
-    //         const ofy = (point.y - this.y) * this.elasticity;
-    //         this.applyForce(ofx, ofy);
-    //     });
-    // }
+    attractors = []; // just testing
+
+    addAttractor(point) {
+        this.attractors = [...this.attractors, point];
+    }
+
+    setForceFromAttractors() {
+        // currently unused, was testing out an
+        this.attractors.forEach((point, i) => {
+            const { x, y } = point;
+
+            const force = { x: 0, y: 0 }; // prev point force
+            const { vx, vy } = point;
+
+            force.y = ADJACENT_SPRING_CONSTANT * vy;
+            force.x = ADJACENT_SPRING_CONSTANT * vx;
+
+            // apply adjacent forces to current spring
+            this.applyForce(force.x, force.y);
+        });
+    }
+
+    applyForceFromMouse(pointer) {
+        const { x, y } = pointer.position;
+
+        const distance = this.distance(pointer.position);
+
+        if (distance < MOUSE_RADIUS) {
+            const [dx, dy] = pointer.delta();
+            const power = (1 - distance / MOUSE_RADIUS) * MOUSE_STRENGTH;
+
+            this.applyForce(dx * power, dy * power);
+        }
+    }
 
     setSpringForce() {
         // force to origin, difference multiplied by elasticity constant
@@ -88,17 +109,20 @@ class Spring extends Point {
         this.fy = 0;
     }
 
-    update = () => {
+    update = ({ pointer }) => {
         if (this.isFixed) return;
+        this.setForceFromAttractors();
+        this.applyForceFromMouse(pointer);
         this.setSpringForce();
         this.solveVelocity();
     };
 
-    draw = ({ ctx, pointer }) => {
+    draw = ({ ctx }) => {
         // temporary, just to see what's happening
         // const { x, y } = this;
-        // ctx.strokeStyle = '#ccc';
-        // ctx.lineWidth = 2;
+        // ctx.fillStyle = 'white';
+        // ctx.lineWidth = 5;
+        // ctx.fillRect(x - 2, y - 2, 4, 4);
         // ctx.beginPath();
         // ctx.arc(x, y, 4, 0, Math.PI * 2, true);
         // ctx.closePath();
