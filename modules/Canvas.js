@@ -31,10 +31,10 @@ class Canvas {
             const cx = window.innerWidth / 2 * this.dpr;
             const cy = window.innerHeight / 2 * this.dpr;
 
-            const dx = window.innerWidth / 3 * this.dpr;
-            const dy = window.innerHeight / 8 * this.dpr;
+            // const dx = window.innerWidth / 3 * this.dpr;
+            const dy = window.innerHeight / 4 * this.dpr;
 
-            const offX = cx + Math.sin(tick / 20) * dx;
+            const offX = cx;
             const offY = cy + Math.cos(-tick / 20) * dy;
 
             pointer.lastPosition.moveTo(pointer.position.x, pointer.position.y);

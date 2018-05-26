@@ -10,7 +10,7 @@ class Cursor extends Entity {
         this.radius = this.toValue(radius);
         this.pi2 = Math.PI * 2;
         this.lineWidth = this.toValue(2);
-        this.strokeStyle = '#fff';
+        this.strokeStyle = '#7bc4a2';
     }
 
     draw = ({ ctx, pointer }) => {

@@ -5,13 +5,13 @@ import Point from './Point';
 //*‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡*/
 
 // defaults and constants
-const ELASTICITY = 0.03; // elastic force toward the origin
-const DAMPING = 0.75;
-const MASS = 0.8;
-const ADJACENT_SPRING_CONSTANT = 0.1;
+const ELASTICITY = 0.05; // elastic force toward the origin
+const DAMPING = 0.4;
+const MASS = 10;
+const ADJACENT_SPRING_CONSTANT = 0.12;
 
 const DPR = window.devicePixelRatio || 1;
-const MOUSE_STRENGTH = 0.5; // 0 - 1
+const MOUSE_STRENGTH = 5; // 0 - 1
 const MOUSE_RADIUS = 100 * DPR;
 
 class Spring extends Point {
@@ -50,16 +50,17 @@ class Spring extends Point {
         this.attractors = [...this.attractors, point];
     }
 
-    setForceFromAttractors() {
+    setAdjacentForces() {
         // currently unused, was testing out an
         this.attractors.forEach((point, i) => {
             const { x, y } = point;
 
             const force = { x: 0, y: 0 }; // prev point force
-            const { vx, vy } = point;
+            const { x: x1, y: y1 } = point;
+            const { x: x2, y: y2 } = this;
 
-            force.y = ADJACENT_SPRING_CONSTANT * vy;
-            force.x = ADJACENT_SPRING_CONSTANT * vx;
+            force.x = x1 - x2;
+            force.y = y1 - y2;
 
             // apply adjacent forces to current spring
             this.applyForce(force.x, force.y);
@@ -111,18 +112,19 @@ class Spring extends Point {
 
     update = ({ pointer }) => {
         if (this.isFixed) return;
-        this.setForceFromAttractors();
         this.applyForceFromMouse(pointer);
         this.setSpringForce();
+        this.setAdjacentForces();
+
         this.solveVelocity();
     };
 
     draw = ({ ctx }) => {
         // temporary, just to see what's happening
-        // const { x, y } = this;
-        // ctx.fillStyle = 'white';
-        // ctx.lineWidth = 5;
-        // ctx.fillRect(x - 2, y - 2, 4, 4);
+        const { x, y } = this;
+        ctx.fillStyle = 'white';
+        ctx.lineWidth = 5;
+        ctx.fillRect(x - 2, y - 2, 4, 4);
         // ctx.beginPath();
         // ctx.arc(x, y, 4, 0, Math.PI * 2, true);
         // ctx.closePath();

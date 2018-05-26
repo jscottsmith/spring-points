@@ -12,7 +12,7 @@ class PolyWave extends Entity {
         this.verts = verts; // corners
         this.color = color;
         this.points = [];
-        this.resolution = 20;
+        this.resolution = 40;
         this.elasticity = elasticity;
         this.damping = damping;
 
@@ -21,35 +21,42 @@ class PolyWave extends Entity {
     }
 
     constructPolyWave() {
-        let begin = true;
-
         for (let i = 0; i < this.verts.length; i++) {
             const p1 = this.verts[i];
             const p2 = this.verts[i + 1];
 
             if (p1 && p2) {
-                const [dx, dy] = p1.delta(p2);
-                const distance = p1.distance(p2);
+                const [dx, dy] = p2.point.delta(p1.point);
+                const distance = p2.point.distance(p1.point);
                 const amount = distance / this.resolution;
                 const pointAmt = Math.round(amount);
 
                 const offX = dx / pointAmt;
                 const offY = dy / pointAmt;
 
-                for (let k = 1; k <= pointAmt; k++) {
-                    const x = p1.x - offX * k;
-                    const y = p1.y - offY * k;
-                    this.points.push(
-                        new Spring({
+                if (p1.isSpring) {
+                    for (let k = 1; k <= pointAmt; k++) {
+                        // debugger;
+                        const x = p1.point.x + offX * k;
+                        const y = p1.point.y + offY * k;
+                        const point = new Spring({
                             x,
                             y,
                             elasticity: this.elasticity,
                             damping: this.damping,
+                            isFixed: k === 0 || k === pointAmt,
+                        });
+                        this.points.push(point);
+                    }
+                } else {
+                    this.points.push(
+                        new Spring({
+                            x: p2.point.x,
+                            y: p2.point.y,
+                            isFixed: true,
                         })
                     );
                 }
-
-                begin = false;
             }
         }
     }
@@ -59,14 +66,20 @@ class PolyWave extends Entity {
             const isLast = i === this.points.length - 1;
             const isFirst = i === 0;
             if (isLast) {
-                p.addAttractor(this.points[i - 1]);
-                p.addAttractor(this.points[0]);
+                const prevPoint = this.points[i - 1];
+                const nextPoint = this.points[0];
+                !p.isFixed && p.addAttractor(prevPoint);
+                !p.isFixed && p.addAttractor(nextPoint);
             } else if (isFirst) {
-                p.addAttractor(this.points[this.points.length - 1]);
-                p.addAttractor(this.points[i + 1]);
+                const prevPoint = this.points[this.points.length - 1];
+                const nextPoint = this.points[i + 1];
+                !p.isFixed && p.addAttractor(prevPoint);
+                !p.isFixed && p.addAttractor(nextPoint);
             } else {
-                p.addAttractor(this.points[i - 1]);
-                p.addAttractor(this.points[i + 1]);
+                const prevPoint = this.points[i - 1];
+                const nextPoint = this.points[i + 1];
+                !p.isFixed && p.addAttractor(prevPoint);
+                !p.isFixed && p.addAttractor(nextPoint);
             }
         });
     }
@@ -86,7 +99,9 @@ class PolyWave extends Entity {
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
 
+        ctx.globalCompositeOperation = 'screen';
         ctx.fill();
+        ctx.globalCompositeOperation = 'source-over';
     };
 
     update = context => {
