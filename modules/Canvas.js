@@ -27,19 +27,19 @@ class Canvas {
         this.render();
 
         // demo pointer
-        this.pointer.addPointerModifier((pointer, tick) => {
-            const cx = window.innerWidth / 2 * this.dpr;
-            const cy = window.innerHeight / 2 * this.dpr;
+        // this.pointer.addPointerModifier((pointer, tick) => {
+        //     const cx = window.innerWidth / 2 * this.dpr;
+        //     const cy = window.innerHeight / 2 * this.dpr;
 
-            // const dx = window.innerWidth / 3 * this.dpr;
-            const dy = window.innerHeight / 4 * this.dpr;
+        //     // const dx = window.innerWidth / 3 * this.dpr;
+        //     const dy = window.innerHeight / 4 * this.dpr;
 
-            const offX = cx;
-            const offY = cy + Math.cos(-tick / 20) * dy;
+        //     const offX = cx;
+        //     const offY = cy + Math.cos(-tick / 20) * dy;
 
-            pointer.lastPosition.moveTo(pointer.position.x, pointer.position.y);
-            pointer.position.moveTo(offX, offY);
-        });
+        //     pointer.lastPosition.moveTo(pointer.position.x, pointer.position.y);
+        //     pointer.position.moveTo(offX, offY);
+        // });
     }
 
     setupListeners() {
@@ -81,7 +81,7 @@ class Canvas {
         });
 
         // update pointer for demos
-        this.pointer.update(this);
+        // this.pointer.update(this);
 
         // Cleanup "dead" entities
         this.removeDead();

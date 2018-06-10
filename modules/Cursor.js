@@ -5,12 +5,12 @@ import Entity from './Entity';
 //*‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡*/
 
 class Cursor extends Entity {
-    constructor(radius) {
+    constructor({ color, radius }) {
         super();
         this.radius = this.toValue(radius);
         this.pi2 = Math.PI * 2;
         this.lineWidth = this.toValue(2);
-        this.strokeStyle = '#7bc4a2';
+        this.strokeStyle = color;
     }
 
     draw = ({ ctx, pointer }) => {

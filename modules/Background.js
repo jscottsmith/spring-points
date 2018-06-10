@@ -5,6 +5,11 @@ import Entity from './Entity';
 //*‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡*/
 
 class Background extends Entity {
+    constructor({ color }) {
+        super();
+        this.color = color;
+    }
+
     drawText({ ctx, canvas }) {
         const ms = Math.max(canvas.width, canvas.height);
         const size = ms / 15;
@@ -24,7 +29,7 @@ class Background extends Entity {
         // gradient.addColorStop(1, '#222');
 
         // ctx.fillStyle = gradient;
-        ctx.fillStyle = '#252f3d';
+        ctx.fillStyle = this.color;
         // ctx.globalAlpha = 0.9;
         ctx.fillRect(...bounds.params);
         // ctx.globalAlpha = 1;

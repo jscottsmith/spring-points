@@ -2,18 +2,8 @@ import Canvas from './modules/Canvas';
 import Background from './modules/Background';
 import Cursor from './modules/Cursor';
 import Pointer from './modules/Pointer';
-import Spring from './modules/Spring';
-import Wave from './modules/Wave';
 import Point from './modules/Point';
-import PolyWave from './modules/PolyWave';
-
-import {
-    getRandomInt,
-    getRandomFloat,
-    clip,
-    cycle,
-    randomGauss,
-} from './utils';
+import TubeDude from './modules/TubeDude';
 
 const colors = [
     '#d16060',
@@ -24,64 +14,46 @@ const colors = [
     '#a05065',
 ];
 
-function generateRandomTriangle(center, size) {
-    const rad1 = getRandomFloat(0, 2);
-    const rad2 = getRandomFloat(0, 2);
-    const rad3 = 2 + rad1 + rad2;
-
-    const p1 = center.clone().moveAtAngle(rad1, size);
-    const p2 = center.clone().moveAtAngle(rad2, size);
-    const p3 = center.clone().moveAtAngle(rad3, size);
-    return [p1, p2, p3];
-}
-
 const DPR = window.devicePixelRatio || 1;
 
-const center = new Point(
+// const center = new Point(
+//     window.innerWidth / 2 * DPR,
+//     window.innerHeight / 2 * DPR
+// );
+
+const bottomCenter = new Point(
     window.innerWidth / 2 * DPR,
-    window.innerHeight / 2 * DPR
+    window.innerHeight * DPR
 );
 
-const createWaves = amount =>
-    Array(amount)
-        .fill(null)
-        .map((_, i) => {
-            const size = 40 * (amount - i) * DPR;
-            const points = 6 + (amount - i);
-            const verts = [
-                {
-                    point: new Point(0, window.innerHeight * DPR / 2),
-                    isSpring: true,
-                },
-                {
-                    point: new Point(
-                        window.innerWidth * DPR,
-                        window.innerHeight * DPR / 2
-                    ),
-                },
-                {
-                    point: new Point(
-                        window.innerWidth * DPR,
-                        window.innerHeight * DPR
-                    ),
-                },
-                {
-                    point: new Point(0, window.innerHeight * DPR),
-                },
-            ];
-
-            const cdx = cycle(i, colors.length);
-            return new PolyWave({
-                verts: [...verts, verts[0]],
-                elasticity: getRandomFloat(0.15, 0.2),
-                damping: getRandomFloat(0.84, 0.89),
-                color: colors[cdx],
-            });
-        });
+const width = Math.max(window.innerWidth, window.innerHeight) / 15 * DPR;
 
 // Kick off
-const canvas = new Canvas({
+new Canvas({
     canvas: document.getElementById('canvas'),
     pointer: new Pointer(),
-    entities: [new Background(), ...createWaves(4), new Cursor(10)],
+    entities: [
+        new Background({ color: colors[3] }),
+        new TubeDude({
+            position: bottomCenter,
+            color: colors[1],
+            width,
+            height: window.innerHeight * 0.6 * DPR,
+        }),
+        new TubeDude({
+            position: bottomCenter
+                .clone()
+                .move(-window.innerWidth / 6 * DPR, 0),
+            color: colors[2],
+            width,
+            height: window.innerHeight * 0.5 * DPR,
+        }),
+        new TubeDude({
+            position: bottomCenter.clone().move(window.innerWidth / 6 * DPR, 0),
+            color: colors[4],
+            width,
+            height: window.innerHeight * 0.7 * DPR,
+        }),
+        new Cursor({ color: 'white', radius: 10 }),
+    ],
 });

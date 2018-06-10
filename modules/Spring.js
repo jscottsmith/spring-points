@@ -112,10 +112,9 @@ class Spring extends Point {
 
     update = ({ pointer }) => {
         if (this.isFixed) return;
-        this.applyForceFromMouse(pointer);
+        pointer && this.applyForceFromMouse(pointer);
         this.setSpringForce();
         this.setAdjacentForces();
-
         this.solveVelocity();
     };
 
