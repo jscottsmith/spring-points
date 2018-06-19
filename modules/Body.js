@@ -1,6 +1,10 @@
 import Link from './Link';
 import Entity from './Entity';
 
+//*‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡/
+// Body
+//*‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡*/
+
 class Body extends Entity {
     constructor({ width, height, position, resolution, color }) {
         super();
@@ -76,16 +80,6 @@ class Body extends Entity {
         ctx.lineCap = 'butt';
         ctx.lineJoin = 'round';
         ctx.stroke();
-
-        // this.spine.forEach(point => {
-        //     ctx.beginPath();
-        //     ctx.lineTo(point.x, point.y);
-        //     ctx.lineTo(point.x + 1, point.y + 1);
-        //     ctx.closePath();
-        //     ctx.strokeStyle = 'white';
-        //     ctx.lineWidth = this.toValue(4);
-        //     ctx.stroke();
-        // });
     };
 
     update = context => {

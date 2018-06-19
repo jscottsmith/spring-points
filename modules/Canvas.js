@@ -25,21 +25,6 @@ class Canvas {
         this.setCanvasSize();
         this.setupListeners();
         this.render();
-
-        // demo pointer
-        // this.pointer.addPointerModifier((pointer, tick) => {
-        //     const cx = window.innerWidth / 2 * this.dpr;
-        //     const cy = window.innerHeight / 2 * this.dpr;
-
-        //     // const dx = window.innerWidth / 3 * this.dpr;
-        //     const dy = window.innerHeight / 4 * this.dpr;
-
-        //     const offX = cx;
-        //     const offY = cy + Math.cos(-tick / 20) * dy;
-
-        //     pointer.lastPosition.moveTo(pointer.position.x, pointer.position.y);
-        //     pointer.position.moveTo(offX, offY);
-        // });
     }
 
     setupListeners() {
@@ -67,10 +52,6 @@ class Canvas {
         return this.entities;
     }
 
-    removeDead() {
-        this.entities = this.entities.filter(({ dead = false }) => !dead);
-    }
-
     render = () => {
         // Main loop
 
@@ -79,12 +60,6 @@ class Canvas {
             draw(this);
             update(this);
         });
-
-        // update pointer for demos
-        // this.pointer.update(this);
-
-        // Cleanup "dead" entities
-        this.removeDead();
 
         ++this.tick;
         window.requestAnimationFrame(this.render);

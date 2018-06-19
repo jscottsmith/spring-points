@@ -1,19 +1,17 @@
 import Point from './Point';
 
 //*‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡/
-// Spring
+// Link
 //*‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡*/
 
 // defaults and constants
-const MASS = 2.5;
-const ADJACENT_SPRING_CONSTANT = 0.12;
 
 const DPR = window.devicePixelRatio || 1;
 const MOUSE_STRENGTH = 0.7; // 0 - 1
 const MOUSE_RADIUS = 100 * DPR;
 
 class Link extends Point {
-    constructor({ x, y, isFixed, mass = MASS }) {
+    constructor({ x, y, isFixed, mass = 2.5 }) {
         super(x, y);
         this.vx = 0; // velocity x
         this.vy = 0; // velocity y

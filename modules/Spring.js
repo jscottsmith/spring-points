@@ -4,24 +4,14 @@ import Point from './Point';
 // Spring
 //*‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡*/
 
-// defaults and constants
-const ELASTICITY = 0.05; // elastic force toward the origin
-const DAMPING = 0.4;
-const MASS = 10;
-const ADJACENT_SPRING_CONSTANT = 0.12;
-
-const DPR = window.devicePixelRatio || 1;
-const MOUSE_STRENGTH = 5; // 0 - 1
-const MOUSE_RADIUS = 100 * DPR;
-
 class Spring extends Point {
     constructor({
         x,
         y,
         isFixed,
-        mass = MASS,
-        elasticity = ELASTICITY,
-        damping = DAMPING,
+        mass = 10,
+        elasticity = 0.4,
+        damping = 0.05,
     }) {
         super(x, y);
         this.ox = x; // original origin x, never changes
@@ -67,19 +57,6 @@ class Spring extends Point {
         });
     }
 
-    applyForceFromMouse(pointer) {
-        const { x, y } = pointer.position;
-
-        const distance = this.distance(pointer.position);
-
-        if (distance < MOUSE_RADIUS) {
-            const [dx, dy] = pointer.delta();
-            const power = (1 - distance / MOUSE_RADIUS) * MOUSE_STRENGTH;
-
-            this.applyForce(dx * power, dy * power);
-        }
-    }
-
     setSpringForce() {
         // force to origin, difference multiplied by elasticity constant
         const fx = (this.ox - this.x) * this.elasticity;
@@ -112,7 +89,6 @@ class Spring extends Point {
 
     update = ({ pointer }) => {
         if (this.isFixed) return;
-        pointer && this.applyForceFromMouse(pointer);
         this.setSpringForce();
         this.setAdjacentForces();
         this.solveVelocity();
@@ -124,10 +100,6 @@ class Spring extends Point {
         ctx.fillStyle = 'white';
         ctx.lineWidth = 5;
         ctx.fillRect(x - 2, y - 2, 4, 4);
-        // ctx.beginPath();
-        // ctx.arc(x, y, 4, 0, Math.PI * 2, true);
-        // ctx.closePath();
-        // ctx.stroke();
     };
 }
 

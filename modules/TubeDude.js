@@ -1,31 +1,38 @@
-import Entity from './Entity';
-import Link from './Link';
-import Body from './Body';
-import Shoulders from './Shoulders';
-import Tangent from './Tangent';
 import Arms from './Arms';
+import Body from './Body';
+import Entity from './Entity';
 import Eyes from './Eyes';
+import Mouth from './Mouth';
 
 import { getRandomInt, getRandomFloat } from '../utils';
-import Mouth from './Mouth';
 
 //*‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡/
 // TubeDude
 //*‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡*/
 
 class TubeDude extends Entity {
-    constructor({ position, width, height, color }) {
+    constructor({ position, width, height, color, mouthColor, pupilColor }) {
         super();
         this.position = position;
         this.height = height;
         this.width = width;
         this.color = color;
+        this.pupilColor = pupilColor;
+        this.mouthColor = mouthColor;
         this.resolution = this.toValue(window.innerHeight / 30);
         this.buildBody();
     }
 
     buildBody() {
-        const { color, width, height, position, resolution } = this;
+        const {
+            color,
+            width,
+            height,
+            position,
+            resolution,
+            mouthColor,
+            pupilColor,
+        } = this;
         const pointAmt = Math.round(this.height / this.resolution);
 
         this.body = new Body({
@@ -39,7 +46,7 @@ class TubeDude extends Entity {
         this.arms = new Arms({
             p1: this.body.spine[Math.round(pointAmt * 0.6)],
             p2: this.body.spine[Math.round(pointAmt * 0.6) + 1],
-            shoulderWidth: width / 1.3,
+            shoulderWidth: width / 1.4,
             length: height * 0.4,
             width: width / 4,
             resolution,
@@ -50,6 +57,7 @@ class TubeDude extends Entity {
             p1: this.body.spine[Math.round(pointAmt * 0.8)],
             p2: this.body.spine[Math.round(pointAmt * 0.8) + 1],
             color,
+            pupilColor,
             size: width / 3.5,
             width: width / 2,
         });
@@ -60,6 +68,7 @@ class TubeDude extends Entity {
             size: width / 3.5,
             lipColor: '#d16060',
             lipWidth: width / 15,
+            mouthColor,
         });
     }
 

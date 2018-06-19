@@ -1,6 +1,10 @@
 import Arm from './Arm';
 import Tangent from './Tangent';
 
+//*‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡/
+// Arms
+//*‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡*/
+
 class Arms {
     constructor({ p1, p2, shoulderWidth, length, width, resolution, color }) {
         this.tan = new Tangent({ p1, p2, width: shoulderWidth });

@@ -1,8 +1,12 @@
 import Eye from './Eye';
 import Tangent from './Tangent';
 
+//*‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡/
+// Eyes
+//*‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡*/
+
 class Eyes {
-    constructor({ p1, p2, width, size, color }) {
+    constructor({ p1, p2, width, size, color, pupilColor }) {
         this.tan = new Tangent({
             p1,
             p2,
@@ -12,6 +16,7 @@ class Eyes {
         this.li = new Eye({
             size,
             color,
+            pupilColor,
             position: this.tan.t1,
             theta: this.tan.theta,
         });
@@ -19,6 +24,7 @@ class Eyes {
         this.ri = new Eye({
             size,
             color,
+            pupilColor,
             position: this.tan.t2,
             theta: this.tan.theta,
         });

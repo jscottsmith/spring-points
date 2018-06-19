@@ -7,8 +7,9 @@ import Spring from './Spring';
 //*‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡*/
 
 class Eye {
-    constructor({ size, position, theta, color }) {
+    constructor({ size, position, theta, color, pupilColor }) {
         this.color = color;
+        this.pupilColor = pupilColor;
         this.size = size;
         this.setTheta(theta);
         this.position = position;
@@ -48,7 +49,7 @@ class Eye {
         this.ctx.fill();
 
         // pupil
-        this.ctx.fillStyle = 'black';
+        this.ctx.fillStyle = this.pupilColor;
         this.ctx.beginPath();
         this.ctx.arc(
             this.pupil.x,

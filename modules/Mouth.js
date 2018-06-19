@@ -3,14 +3,15 @@ import Tangent from './Tangent';
 import Point from './Point';
 
 //*‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡/
-// Eye
+// Mouth
 //*‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡*/
 
 class Mouth {
-    constructor({ p1, p2, size, position, lipColor, lipWidth }) {
+    constructor({ p1, p2, size, position, lipColor, lipWidth, mouthColor }) {
         this.tan = new Tangent({ p1, p2, size });
         this.lipColor = lipColor;
         this.lipWidth = lipWidth;
+        this.mouthColor = mouthColor;
         this.pad = size * 2;
         this.pad2 = size * 4;
         this.size = size + this.pad2;
@@ -79,7 +80,7 @@ class Mouth {
         this.ctx.lineJoin = 'round';
 
         // mouth
-        this.ctx.fillStyle = 'black';
+        this.ctx.fillStyle = this.mouthColor;
         this.ctx.fill();
         // teeth
         this.ctx.clip();
